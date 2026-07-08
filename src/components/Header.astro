@@ -1,0 +1,64 @@
+---
+import { SITE } from "@/config/site.config";
+import Profile from "@/data/profile";
+
+const pathname = Astro.url.pathname;
+
+const HeaderLink = [
+  { label: "home", href: "/" },
+  {
+    label: "writing",
+    href: `${SITE.protocol}://blog.${SITE.domain}`,
+    external: true,
+  },
+  {
+    label: "resume",
+    href: `${SITE.protocol}://${SITE.domain}/resume`,
+    external: true,
+  },
+];
+---
+
+<header
+  class="flex flex-col gap-4 text-base sm:flex-row sm:items-center sm:justify-between sm:text-lg"
+>
+  <h1 class="text-xl leading-tight">{Profile.name}.</h1>
+
+  <nav>
+    <ul class="flex flex-wrap gap-x-5 gap-y-2 sm:gap-x-7.5">
+      {
+        HeaderLink.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <li>
+              <a
+                href={link.href}
+                target={link.external ? "_blank" : "_self"}
+                rel={link.external ? "noopener noreferrer" : undefined}
+                class={`text-foreground-muted hover:text-foreground-primary ${isActive ? "text-foreground-primary underline underline-offset-4" : ""}`}
+                title={
+                  link.external
+                    ? `${link.label} (opens in a new tab)`
+                    : link.label
+                }
+              >
+                {link.external ? `${link.label} ↗` : link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+      <li>
+        <button
+          type="button"
+          data-theme-toggle
+          class="text-foreground-muted hover:text-foreground-primary focus-visible:outline-none focus-visible:underline focus-visible:underline-offset-4"
+          aria-label="Switch theme"
+          aria-pressed="false"
+        >
+          [dark]
+        </button>
+      </li>
+    </ul>
+  </nav>
+</header>

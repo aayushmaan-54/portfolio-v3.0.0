@@ -1,0 +1,76 @@
+---
+import Works from "@/data/work";
+---
+
+<h1 class="text-2xl font-semibold mt-16 sm:mt-20 sm:text-3xl">
+  <span class="opacity-30 mr-2 text-xl">#</span>work
+</h1>
+
+<div class="space-y-0 mt-5">
+  {
+    Works.map((work) => (
+      <div class="border-b border-border-primary px-0 py-4 hover:bg-background-hover hover:border-border-hover transition-colors cursor-default sm:p-4">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+          <h2 class="min-w-0 text-lg font-bold tracking-wide wrap-break-word">
+            {work.title}
+          </h2>
+
+          {work.inProgress ? (
+            <span
+              class="text-sm text-foreground-muted italic"
+              style="font-variant-ligatures: none;"
+            >
+              working on it...
+            </span>
+          ) : (
+            <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+              {work.github && (
+                <a
+                  href={work.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-foreground-muted hover:text-foreground-primary"
+                >
+                  github ↗
+                </a>
+              )}
+              {work.demo && (
+                <a
+                  href={work.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-foreground-muted hover:text-foreground-primary"
+                >
+                  demo ↗
+                </a>
+              )}
+              {work.npm && (
+                <a
+                  href={work.npm}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-foreground-muted hover:text-foreground-primary"
+                >
+                  npm ↗
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+
+        <p class="mt-2 text-foreground-secondary leading-relaxed">
+          {work.description}
+        </p>
+
+        <div class="mt-3 flex flex-wrap gap-2 text-sm text-foreground-muted">
+          {work.stack.map((tech, i) => (
+            <span>
+              {tech}
+              {i < work.stack.length - 1 ? " ·" : ""}
+            </span>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>

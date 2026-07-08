@@ -1,0 +1,32 @@
+---
+import { Image } from "astro:assets";
+import profileImage from "@/assets/ditther-profile.webp";
+import Socials from "@/components/Socials.astro";
+import Profile from "@/data/profile";
+---
+
+<Image
+  src={profileImage}
+  alt={Profile.name}
+  width={140}
+  height={140}
+  densities={[1, 2]}
+  loading="eager"
+  class="rounded-full size-28 border-2 sm:size-35"
+/>
+
+<div class="flex min-w-0 flex-col gap-4">
+  <h1
+    data-text={Profile.name}
+    class="glitch-name text-2xl font-semibold mt-4 font-pixel leading-tight sm:text-3xl cursor-default"
+  >
+    {Profile.name}
+  </h1>
+  <p class="text-lg text-foreground-muted font-medium sm:text-xl">
+    software engineer
+  </p>
+
+  <p class="text-base leading-relaxed sm:text-lg">{Profile.description}</p>
+
+  <Socials />
+</div>

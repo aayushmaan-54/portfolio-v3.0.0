@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  color-scheme: light;
+
+  --background-primary: #ffffff;
+  --background-hover: #f6f6f4;
+
+  --foreground-primary: #18181b;
+  --foreground-secondary: #52525c;
+  --foreground-muted: #4a5565;
+
+  --border-primary: #e4e4e7;
+  --border-hover: #9f9fa9;
+
+  --glitch-cyan: #00e5ff;
+  --glitch-red: #ff2b4e;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background-primary: #09090b;
+  --background-hover: #18181b;
+
+  --foreground-primary: #f4f4f5;
+  --foreground-secondary: #b0b0b8;
+  --foreground-muted: #92929c;
+
+  --border-primary: #27272a;
+  --border-hover: #52525b;
+
+  --glitch-cyan: #00e5ff;
+  --glitch-red: #ff2b4e;
+}
+
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+@theme {
+  --font-mono:
+    var(--font-geist-mono), "Geist Mono Fallback", ui-monospace, monospace;
+  --font-pixel: var(--font-silkscreen), "Silkscreen Fallback", monospace;
+
+  --color-background-primary: var(--background-primary);
+  --color-background-hover: var(--background-hover);
+
+  --color-border-primary: var(--border-primary);
+  --color-border-hover: var(--border-hover);
+
+  --color-foreground-primary: var(--foreground-primary);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-muted: var(--foreground-muted);
+
+  --color-glitch-cyan: var(--glitch-cyan);
+  --color-glitch-red: var(--glitch-red);
+
+  --animate-blink: blink 1.1s step-end infinite;
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border-primary;
+  }
+  html {
+    @apply bg-background-primary;
+  }
+  body {
+    @apply bg-background-primary font-mono text-foreground-primary;
+  }
+}
+
+::selection {
+  background-color: var(--foreground-primary);
+  color: var(--background-primary);
+}
+
+:target {
+  scroll-margin-block: 1rem;
+}
+
+/* Glitch text effect */
+.glitch-name {
+  position: relative;
+  isolation: isolate;
+}
+
+.glitch-name::before,
+.glitch-name::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0.8;
+}
+
+.glitch-name::before {
+  color: var(--color-glitch-cyan);
+  z-index: -1;
+  transform: translateX(-2px);
+  animation: glitch-left 3.2s steps(1, end) infinite;
+}
+
+.glitch-name::after {
+  color: var(--color-glitch-red);
+  z-index: -2;
+  transform: translateX(3px);
+  animation: glitch-right 2.7s steps(1, end) infinite;
+}
+
+@keyframes glitch-left {
+  0%,
+  100% {
+    transform: translateX(-2px);
+  }
+  88% {
+    transform: translate(-5px, 1px);
+  }
+  91% {
+    transform: translateX(2px);
+  }
+  94% {
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes glitch-right {
+  0%,
+  100% {
+    transform: translateX(3px);
+  }
+  62% {
+    transform: translate(6px, -1px);
+  }
+  65% {
+    transform: translateX(-1px);
+  }
+  68% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch-name::before,
+  .glitch-name::after {
+    animation: none;
+  }
+}

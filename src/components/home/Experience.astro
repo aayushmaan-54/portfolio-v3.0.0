@@ -1,0 +1,56 @@
+---
+import { Image } from "astro:assets";
+import experience from "@/data/experience";
+---
+
+<h1 class="text-2xl font-semibold mt-16 sm:mt-20 sm:text-3xl">
+  <span class="opacity-30 mr-2">#</span>experience
+</h1>
+
+<div class="mt-5">
+  {
+    experience.map((job) => {
+      return (
+        <details
+          open={job.current}
+          class="group border-b border-border-primary last:border-b-0"
+        >
+          <summary class="flex flex-col gap-3 px-0 py-4 cursor-pointer list-none hover:bg-background-hover transition-colors sm:flex-row sm:items-center sm:justify-between sm:p-4">
+            <div class="flex min-w-0 items-start gap-3">
+              <Image
+                src={job.logo}
+                alt={`${job.company} logo`}
+                width={24}
+                height={24}
+                densities={[1, 2]}
+                class="w-6 shrink-0 rounded-sm"
+              />
+              <div class="min-w-0">
+                <h2 class="font-bold flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 wrap-break-word">
+                  {job.role} · {job.company}
+                  {job.current && (
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-success" />
+                    </span>
+                  )}
+                </h2>
+                <p class="text-sm text-foreground-muted">{job.location}</p>
+              </div>
+            </div>
+            <span class="text-sm text-foreground-muted flex items-center gap-2 sm:shrink-0">
+              {job.duration}
+              <span class="transition-transform group-open:rotate-180">▾</span>
+            </span>
+          </summary>
+
+          <ul class="pb-4 pl-6 list-disc space-y-1 text-foreground-secondary sm:px-4 sm:pl-14">
+            {job.description.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        </details>
+      );
+    })
+  }
+</div>

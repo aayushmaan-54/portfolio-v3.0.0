@@ -1,0 +1,113 @@
+---
+import "@/styles/global.css";
+import { Font } from "astro:assets";
+import { SITE } from "@/config/site.config";
+import redirects from "@/data/redirects";
+
+export function getStaticPaths() {
+  return Object.keys(redirects).map((link) => ({ params: { link } }));
+}
+
+const { link } = Astro.params;
+const destination = link
+  ? redirects[link as keyof typeof redirects]
+  : undefined;
+
+if (!destination) {
+  return new Response(null, { status: 404 });
+}
+
+const displayDest = destination.replace(/^https?:\/\//, "").replace(/\/$/, "");
+const themeStorageKey = SITE.browserStorage.theme;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script is:inline define:vars={{ themeStorageKey }}>
+      let storedTheme = null;
+
+      try {
+        storedTheme = localStorage.getItem(themeStorageKey);
+      } catch {
+        storedTheme = null;
+      }
+
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      const theme = storedTheme || (prefersDark ? "dark" : "light");
+
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      document.documentElement.dataset.theme = theme;
+    </script>
+    <title>Redirecting… | Aayushmaan Soni</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#ffffff" class="theme-meta" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <Font cssVariable="--font-geist-mono" preload />
+    <Font cssVariable="--font-silkscreen" preload />
+  </head>
+
+  <body
+    class="flex min-h-screen items-center bg-background-primary text-foreground-primary font-mono"
+  >
+    <main class="mx-auto w-full max-w-4xl px-4 sm:px-6">
+      <div class="flex flex-col items-start gap-2">
+        <p class="text-foreground-muted">// redirect</p>
+        <h1
+          data-text={`/${link}`}
+          class="text-3xl font-bold font-pixel wrap-break-word sm:text-4xl glitch-name"
+        >
+          /{link}
+        </h1>
+
+        <p class="mt-2 text-foreground-secondary">
+          Taking you somewhere else. Won't be a second.
+        </p>
+
+        <div
+          class="mt-6 flex max-w-full flex-wrap items-center gap-2 font-mono text-sm"
+        >
+          <span class="text-foreground-muted">$</span>
+          <span class="text-foreground-secondary">open</span>
+          <a
+            href={destination}
+            data-redirect-link
+            class="break-all text-foreground-primary underline underline-offset-4
+            hover:text-foreground-muted transition-colors"
+          >
+            {displayDest}
+          </a>
+          <span class="inline-block w-2 h-4 bg-foreground-primary animate-blink"
+          ></span>
+        </div>
+      </div>
+    </main>
+
+    <script define:vars={{ destination }}>
+      const themeMeta = document.querySelector(".theme-meta");
+      if (themeMeta && document.documentElement.classList.contains("dark")) {
+        themeMeta.setAttribute("content", "#09090b");
+      }
+
+      const redirectLink = document.querySelector("[data-redirect-link]");
+
+      const tapHaptic = () => {
+        if (!("vibrate" in navigator)) return;
+
+        try {
+          navigator.vibrate(12);
+        } catch {
+          // Haptics are best-effort and should never block the interaction.
+        }
+      };
+
+      redirectLink?.addEventListener("click", tapHaptic);
+
+      setTimeout(() => window.location.replace(destination), 900);
+    </script>
+  </body>
+</html>

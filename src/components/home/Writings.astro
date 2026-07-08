@@ -1,0 +1,54 @@
+---
+import formatDate from "@/utils/formatDate";
+import getLatestPosts from "@/utils/getPosts";
+
+const posts = await getLatestPosts();
+---
+
+<div class="flex items-baseline justify-between gap-4 mt-16 sm:mt-20">
+  <h1 class="text-2xl font-semibold sm:text-3xl">
+    <span class="opacity-30 mr-2">#</span>writing
+  </h1>
+  <a
+    href="https://blog.aayushmaansoni.com"
+    target="_blank"
+    rel="noopener
+  noreferrer"
+    class="group inline-flex items-center gap-1 text-sm
+  text-foreground-muted hover:text-foreground-primary transition-colors"
+  >
+    view all
+    <span class="inline-block transition-transform group-hover:translate-x-1"
+      >→</span
+    >
+  </a>
+</div>
+
+<div class="mt-5">
+  {
+    posts.map((post) => (
+      <a
+        href={`https://blog.aayushmaansoni.com/${post.slug}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group flex items-start justify-between gap-4 border-b border-border-primary last:border-b-0 px-0 py-4 hover:bg-background-hover hover:border-border-hover transition-colors sm:p-4"
+      >
+        <div class="min-w-0">
+          <h2 class="font-bold wrap-break-word group-hover:text-foreground-primary">
+            {post.title}
+          </h2>
+          <time
+            datetime={post.publishedAt}
+            class="text-sm text-foreground-muted"
+          >
+            {formatDate(post.publishedAt)}
+          </time>
+        </div>
+
+        <span class="shrink-0 text-foreground-muted group-hover:text-foreground-primary transition-transform group-hover:-translate-y-0.5">
+          ↗
+        </span>
+      </a>
+    ))
+  }
+</div>

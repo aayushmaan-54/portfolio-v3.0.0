@@ -1,0 +1,243 @@
+---
+import "@/styles/global.css";
+import Databuddy from "@/components/Databuddy.astro";
+import { SITE } from "@/config/site.config";
+import {
+  PUBLIC_GOOGLE_SITE_VERIFICATION,
+  DATABUDDY_CLIENT_ID,
+} from "astro:env/client";
+import { Font } from "astro:assets";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+export interface Props {
+  title?: string;
+  author?: string;
+  profile?: string;
+  description?: string;
+  ogImage?: string;
+  canonicalURL?: string;
+  scrollSmooth?: boolean;
+  pageTitle?: string;
+}
+
+const {
+  title = SITE.title,
+  author = SITE.author,
+  profile = SITE.profile,
+  description = SITE.description,
+  ogImage = SITE.ogImage && `/${SITE.ogImage}`,
+  canonicalURL = new URL(Astro.url.pathname, Astro.url),
+  scrollSmooth = true,
+  pageTitle,
+} = Astro.props;
+
+const socialImageURL = new URL(ogImage, Astro.url);
+
+const sanitizeForJson = (str: string | undefined): string => {
+  if (!str) return "";
+  return str
+    .replace(/[<>]/g, "")
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .trim();
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  headline: sanitizeForJson(title),
+  image: socialImageURL.href,
+  author: [
+    {
+      "@type": "Person",
+      name: sanitizeForJson(author),
+      ...(profile && { url: profile }),
+    },
+  ],
+};
+
+const themeStorageKey = SITE.browserStorage.theme;
+---
+
+<!doctype html>
+<html
+  dir={SITE.dir}
+  lang={SITE.lang ?? "en"}
+  class:list={[scrollSmooth && "scroll-smooth"]}
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script
+      is:inline
+      define:vars={{ themeStorageKey }}
+    >
+      let storedTheme = null;
+
+      try {
+        storedTheme = localStorage.getItem(themeStorageKey);
+      } catch {
+        storedTheme = null;
+      }
+
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = storedTheme || (prefersDark ? "dark" : "light");
+
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      document.documentElement.dataset.theme = theme;
+    </script>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- General Meta Tags -->
+    <title>Aayushmaan Soni {pageTitle && `| ${pageTitle}`}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="author" content={author} />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={socialImageURL} />
+
+    <!-- Article Author URL in Open Graph -->
+    {profile && <meta property="article:author" content={profile} />}
+
+    <!-- Databuddy Analytics -->
+    <Databuddy websiteId={DATABUDDY_CLIENT_ID} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageURL} />
+    <!-- Twitter @creator handle -->
+    {
+      SITE.twitterHandle && (
+        <meta name="twitter:creator" content={SITE.twitterHandle} />
+      )
+    }
+    {
+      SITE.twitterHandle && (
+        <meta name="twitter:site" content={SITE.twitterHandle} />
+      )
+    }
+
+    <!-- Google JSON-LD Structured data (sanitized) -->
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(structuredData)}
+    />
+
+    <meta name="theme-color" content="#ffffff" class="theme-meta" />
+
+    <!-- Google Site Verification -->
+    {
+      PUBLIC_GOOGLE_SITE_VERIFICATION && (
+        <meta
+          name="google-site-verification"
+          content={PUBLIC_GOOGLE_SITE_VERIFICATION}
+        />
+      )
+    }
+
+    <Font cssVariable="--font-geist-mono" preload />
+    <Font cssVariable="--font-silkscreen" preload />
+  </head>
+
+  <body
+    class="mx-auto flex min-h-screen w-full max-w-4xl flex-col px-4 sm:px-6"
+  >
+    <div class="mt-8 sm:mt-14">
+      <Header />
+    </div>
+
+    <main class="w-full min-w-0 flex-1 mt-14 sm:mt-20">
+      <slot />
+    </main>
+
+    <aside class="mt-20">
+      <Footer />
+    </aside>
+
+    <script
+      is:inline
+      define:vars={{ themeStorageKey }}
+    >
+      const themeButtons = document.querySelectorAll("[data-theme-toggle]");
+      const themeMeta = document.querySelector(".theme-meta");
+      const darkThemeColor = "#09090b";
+      const lightThemeColor = "#ffffff";
+
+      const tapHaptic = () => {
+        if (!("vibrate" in navigator)) return;
+
+        try {
+          navigator.vibrate(12);
+        } catch {
+          // Haptics are best-effort and should never block the interaction.
+        }
+      };
+
+      const setTheme = (theme) => {
+        const isDark = theme === "dark";
+
+        document.documentElement.classList.add("theme-switching");
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.dataset.theme = theme;
+
+        try {
+          localStorage.setItem(themeStorageKey, theme);
+        } catch {
+          // Theme still works for the current page if storage is unavailable.
+        }
+
+        if (themeMeta) {
+          themeMeta.setAttribute(
+            "content",
+            isDark ? darkThemeColor : lightThemeColor,
+          );
+        }
+
+        themeButtons.forEach((button) => {
+          button.textContent = isDark ? "[light]" : "[dark]";
+          button.setAttribute(
+            "aria-label",
+            isDark ? "Switch to light mode" : "Switch to dark mode",
+          );
+          button.setAttribute("aria-pressed", String(isDark));
+        });
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            document.documentElement.classList.remove("theme-switching");
+          });
+        });
+      };
+
+      const initialTheme =
+        document.documentElement.dataset.theme ||
+        (document.documentElement.classList.contains("dark") ? "dark" : "light");
+
+      setTheme(initialTheme);
+
+      themeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          tapHaptic();
+
+          const nextTheme = document.documentElement.classList.contains("dark")
+            ? "light"
+            : "dark";
+
+          setTheme(nextTheme);
+        });
+      });
+    </script>
+  </body>
+</html>

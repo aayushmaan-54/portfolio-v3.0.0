@@ -1,0 +1,22 @@
+---
+import socialLinks from "@/data/socials";
+---
+
+<div class="flex flex-wrap gap-x-6 gap-y-2">
+  {
+    socialLinks.map((social) => (
+      <a
+        href={social.href}
+        target={social.href.startsWith("mailto:") ? undefined : "_blank"}
+        rel={
+          social.href.startsWith("mailto:")
+            ? undefined
+            : "noopener noreferrer me"
+        }
+        class="text-foreground-muted hover:text-foreground-primary transition-colors hover:underline underline-offset-4 focus-visible:outline-none focus-visible:underline focus-visible:text-foreground-primary"
+      >
+        [{social.label} ↗]
+      </a>
+    ))
+  }
+</div>
