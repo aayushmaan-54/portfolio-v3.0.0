@@ -3,6 +3,7 @@ import { SITE } from "@/config/site.config";
 import profile from "@/data/profile";
 import work from "@/data/work";
 import techStack from "@/data/TechStack";
+import { destinations } from "@/data/redirects";
 
 const text = (body: string) =>
   new Response(`${body.trim()}\n`, {
@@ -16,42 +17,69 @@ const siteUrl = () => new URL(`${SITE.protocol}://${SITE.domain}`).origin;
 
 const normalizeText = (value: string) =>
   value
-    .replaceAll("\u2014", "-")
-    .replaceAll("\u2049\ufe0f", "?!")
+    .replaceAll("—", "-")
+    .replaceAll("→", "->")
+    .replaceAll("⁉️", "?!")
     .trim();
 
-const markdownList = (items: string[]) =>
-  items.map((item) => `- ${normalizeText(item)}`).join("\n");
+const isUrl = (value: string) => /^(https?:\/\/|mailto:)/.test(value);
+
+const mdLink = (label: string, href: string, description?: string) =>
+  `- [${normalizeText(label).replaceAll("[", "(").replaceAll("]", ")")}](${href})` +
+  (description ? `: ${normalizeText(description)}` : "");
 
 export const GET: APIRoute = () => {
   const origin = siteUrl();
-  const featuredProjects = work
-    .slice(0, 4)
-    .map((project) => `${project.title}: ${project.description}`);
+  const blog = import.meta.env.PUBLIC_BLOG_URL;
+
+  const urls = [
+    mdLink("Portfolio", `${origin}/`, SITE.description),
+    mdLink(
+      "Full LLM context",
+      `${origin}/llms-full.txt`,
+      "Complete structured profile: work, experience, education, credentials, stack",
+    ),
+    isUrl(blog) && mdLink("Blog", blog, "Long-form technical writing"),
+    isUrl(destinations.github) &&
+      mdLink("GitHub", destinations.github, "Source for the projects below"),
+    isUrl(destinations.linkedin) &&
+      mdLink("LinkedIn", destinations.linkedin, "Professional profile"),
+    isUrl(destinations.resume) &&
+      mdLink("Resume", destinations.resume, "Current CV"),
+    isUrl(destinations.gmail) &&
+      mdLink("Email", destinations.gmail, "Direct contact"),
+  ].filter(Boolean);
+
+  const projects = work.map((project) => {
+    const href =
+      project.demo || project.github || ("npm" in project && project.npm);
+    return href
+      ? mdLink(project.title, href as string, project.description)
+      : `- ${normalizeText(project.title)}: ${normalizeText(project.description)}`;
+  });
+
   const skills = techStack.map(
-    (group) => `${group.category}: ${group.items.map((item) => item.name).join(", ")}`,
+    (group) =>
+      `- ${group.category}: ${group.items.map((item) => item.name).join(", ")}`,
   );
 
   return text(`
 # ${SITE.title}
 
-> ${profile.title}. ${profile.description}
+> ${normalizeText(profile.title)}. ${normalizeText(profile.description)}
 
-${SITE.description}
+${normalizeText(SITE.description)}
 
 ## Canonical URLs
-${markdownList([
-  `Website: ${origin}/`,
-  `Full LLM context: ${origin}/llms-full.txt`,
-  `GitHub: ${origin}/github`,
-  `LinkedIn: ${origin}/linkedin`,
-  `Resume: ${origin}/resume`,
-])}
+
+${urls.join("\n")}
 
 ## Featured Work
-${markdownList(featuredProjects)}
+
+${projects.join("\n")}
 
 ## Technical Focus
-${markdownList(skills)}
+
+${skills.join("\n")}
   `);
 };

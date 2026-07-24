@@ -9,6 +9,10 @@ import {
 import { Font } from "astro:assets";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import Haptics from "@/components/Haptics.astro";
+import { destinations } from "@/data/redirects";
+import education from "@/data/education";
+import Profile from "@/data/profile";
 
 export interface Props {
   title?: string;
@@ -19,10 +23,11 @@ export interface Props {
   canonicalURL?: string;
   scrollSmooth?: boolean;
   pageTitle?: string;
+  noindex?: boolean;
 }
 
 const {
-  title = SITE.title,
+  title = `${SITE.title} — ${SITE.tagline}`,
   author = SITE.author,
   profile = SITE.profile,
   description = SITE.description,
@@ -30,7 +35,10 @@ const {
   canonicalURL = new URL(Astro.url.pathname, Astro.url),
   scrollSmooth = true,
   pageTitle,
+  noindex = false,
 } = Astro.props;
+
+const documentTitle = pageTitle ? `${SITE.title} | ${pageTitle}` : title;
 
 const socialImageURL = new URL(ogImage, Astro.url);
 
@@ -42,16 +50,39 @@ const sanitizeForJson = (str: string | undefined): string => {
     .trim();
 };
 
+const siteOrigin = new URL("/", Astro.url).href;
+const personId = `${siteOrigin}#person`;
+
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  headline: sanitizeForJson(title),
-  image: socialImageURL.href,
-  author: [
+  "@graph": [
     {
       "@type": "Person",
+      "@id": personId,
       name: sanitizeForJson(author),
-      ...(profile && { url: profile }),
+      jobTitle: sanitizeForJson(Profile.title),
+      description: sanitizeForJson(description),
+      url: profile || siteOrigin,
+      image: socialImageURL.href,
+      sameAs: [
+        destinations.github,
+        destinations.linkedin,
+        destinations.twitter,
+      ],
+      alumniOf: education.map((edu) => ({
+        "@type": "EducationalOrganization",
+        name: sanitizeForJson(edu.institution),
+      })),
+      knowsAbout: ["Web Development", "Cloud Infrastructure", "Backend Engineering"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteOrigin}#website`,
+      url: siteOrigin,
+      name: sanitizeForJson(SITE.title),
+      description: sanitizeForJson(description),
+      inLanguage: SITE.lang,
+      publisher: { "@id": personId },
     },
   ],
 };
@@ -87,22 +118,29 @@ const themeStorageKey = SITE.browserStorage.theme;
       document.documentElement.dataset.theme = theme;
     </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <link rel="canonical" href={canonicalURL} />
 
     <!-- General Meta Tags -->
-    <title>Aayushmaan Soni {pageTitle && `| ${pageTitle}`}</title>
-    <meta name="title" content={title} />
+    <title>{documentTitle}</title>
+    <meta name="title" content={documentTitle} />
     <meta name="description" content={description} />
     <meta name="author" content={author} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="sitemap" href="/sitemap.xml" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={documentTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE.title} — ${SITE.tagline}`} />
 
     <!-- Article Author URL in Open Graph -->
     {profile && <meta property="article:author" content={profile} />}
@@ -113,9 +151,13 @@ const themeStorageKey = SITE.browserStorage.theme;
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={documentTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImageURL} />
+    <meta
+      name="twitter:image:alt"
+      content={`${SITE.title} — ${SITE.tagline}`}
+    />
     <!-- Twitter @creator handle -->
     {
       SITE.twitterHandle && (
@@ -166,6 +208,8 @@ const themeStorageKey = SITE.browserStorage.theme;
       <Footer />
     </aside>
 
+    <Haptics />
+
     <script
       is:inline
       define:vars={{ themeStorageKey }}
@@ -174,16 +218,6 @@ const themeStorageKey = SITE.browserStorage.theme;
       const themeMeta = document.querySelector(".theme-meta");
       const darkThemeColor = "#09090b";
       const lightThemeColor = "#ffffff";
-
-      const tapHaptic = () => {
-        if (!("vibrate" in navigator)) return;
-
-        try {
-          navigator.vibrate(12);
-        } catch {
-          // Haptics are best-effort and should never block the interaction.
-        }
-      };
 
       const setTheme = (theme) => {
         const isDark = theme === "dark";
@@ -229,8 +263,6 @@ const themeStorageKey = SITE.browserStorage.theme;
 
       themeButtons.forEach((button) => {
         button.addEventListener("click", () => {
-          tapHaptic();
-
           const nextTheme = document.documentElement.classList.contains("dark")
             ? "light"
             : "dark";

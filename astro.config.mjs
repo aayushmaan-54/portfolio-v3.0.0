@@ -58,6 +58,10 @@ export default defineConfig({
         access: "public",
         context: "client",
       }),
+      PUBLIC_BLOG_URL: envField.string({
+        access: "public",
+        context: "client",
+      }),
     },
   },
 });

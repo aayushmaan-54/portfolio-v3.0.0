@@ -3,6 +3,7 @@ import "@/styles/global.css";
 import { Font } from "astro:assets";
 import { SITE } from "@/config/site.config";
 import redirects from "@/data/redirects";
+import Haptics from "@/components/Haptics.astro";
 
 export function getStaticPaths() {
   return Object.keys(redirects).map((link) => ({ params: { link } }));
@@ -25,7 +26,7 @@ const themeStorageKey = SITE.browserStorage.theme;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline define:vars={{ themeStorageKey }}>
       let storedTheme = null;
 
@@ -75,37 +76,26 @@ const themeStorageKey = SITE.browserStorage.theme;
           <span class="text-foreground-secondary">open</span>
           <a
             href={destination}
-            data-redirect-link
-            class="break-all text-foreground-primary underline underline-offset-4
+            data-haptic="nav"
+            class="tap-target break-all text-foreground-primary underline underline-offset-4
             hover:text-foreground-muted transition-colors"
           >
             {displayDest}
           </a>
-          <span class="inline-block w-2 h-4 bg-foreground-primary animate-blink"
-          ></span>
+          <span
+            class="inline-block w-2 h-4 bg-foreground-primary animate-blink"
+            aria-hidden="true"></span>
         </div>
       </div>
     </main>
 
-    <script define:vars={{ destination }}>
+    <Haptics />
+
+    <script is:inline define:vars={{ destination }}>
       const themeMeta = document.querySelector(".theme-meta");
       if (themeMeta && document.documentElement.classList.contains("dark")) {
         themeMeta.setAttribute("content", "#09090b");
       }
-
-      const redirectLink = document.querySelector("[data-redirect-link]");
-
-      const tapHaptic = () => {
-        if (!("vibrate" in navigator)) return;
-
-        try {
-          navigator.vibrate(12);
-        } catch {
-          // Haptics are best-effort and should never block the interaction.
-        }
-      };
-
-      redirectLink?.addEventListener("click", tapHaptic);
 
       setTimeout(() => window.location.replace(destination), 900);
     </script>

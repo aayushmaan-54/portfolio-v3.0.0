@@ -1,20 +1,18 @@
-import { SITE } from "@/config/site.config";
-
 export default [
   {
-    label: "gitHub",
-    href: `${SITE.protocol}://${SITE.domain}/github`,
+    label: "github",
+    href: "/github",
   },
   {
-    label: "linkedIn",
-    href: `${SITE.protocol}://${SITE.domain}/linkedin`,
+    label: "linkedin",
+    href: "/linkedin",
   },
   {
     label: "x",
-    href: `${SITE.protocol}://${SITE.domain}/x`,
+    href: "/x",
   },
   {
     label: "gmail",
-    href: `${SITE.protocol}://${SITE.domain}/gmail`,
+    href: "/gmail",
   },
 ];

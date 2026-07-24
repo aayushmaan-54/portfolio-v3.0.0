@@ -7,13 +7,11 @@ import socialLinks from "@/data/socials";
     socialLinks.map((social) => (
       <a
         href={social.href}
-        target={social.href.startsWith("mailto:") ? undefined : "_blank"}
-        rel={
-          social.href.startsWith("mailto:")
-            ? undefined
-            : "noopener noreferrer me"
-        }
-        class="text-foreground-muted hover:text-foreground-primary transition-colors hover:underline underline-offset-4 focus-visible:outline-none focus-visible:underline focus-visible:text-foreground-primary"
+        target="_blank"
+        rel="noopener noreferrer"
+        title={`${social.label} (opens in a new tab)`}
+        data-haptic="nav"
+        class="tap-target text-foreground-muted hover:text-foreground-primary transition-colors hover:underline underline-offset-4 focus-visible:outline-none focus-visible:underline focus-visible:text-foreground-primary"
       >
         [{social.label} ↗]
       </a>

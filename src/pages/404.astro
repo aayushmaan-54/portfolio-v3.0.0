@@ -2,7 +2,11 @@
 import Layout from "@/layouts/BaseLayout.astro";
 ---
 
-<Layout pageTitle="404" title="Page Not Found">
+<Layout
+  pageTitle="404"
+  description="This page doesn't exist. It might have been moved or renamed."
+  noindex
+>
   <div class="flex flex-col items-start gap-2 mt-20 sm:mt-32">
     <p class="text-foreground-muted">// error</p>
     <h1 data-text="404" class="text-3xl font-bold font-pixel sm:text-4xl glitch-name">
@@ -18,13 +22,15 @@ import Layout from "@/layouts/BaseLayout.astro";
       <span class="text-foreground-secondary">cd</span>
       <a
         href="/"
-        class="text-foreground-primary underline underline-offset-4
+        data-haptic="nav"
+        class="tap-target text-foreground-primary underline underline-offset-4
       hover:text-foreground-muted transition-colors"
       >
         ~/home
       </a>
-      <span class="inline-block w-2 h-4 bg-foreground-primary animate-blink"
-      ></span>
+      <span
+        class="inline-block w-2 h-4 bg-foreground-primary animate-blink"
+        aria-hidden="true"></span>
     </div>
   </div>
 </Layout>

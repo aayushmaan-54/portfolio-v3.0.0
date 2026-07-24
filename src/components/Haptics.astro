@@ -1,0 +1,30 @@
+---
+
+---
+
+<script is:inline>
+  (() => {
+    if (!("vibrate" in navigator)) return;
+
+    const PATTERNS = {
+      tap: 12,
+      toggle: [8, 20, 8],
+      nav: 18,
+    };
+
+    document.addEventListener(
+      "click",
+      (event) => {
+        const el = event.target?.closest?.("[data-haptic]");
+        if (!el) return;
+
+        try {
+          navigator.vibrate(PATTERNS[el.dataset.haptic] ?? PATTERNS.tap);
+        } catch {
+          // Haptics are best-effort and must never block the interaction.
+        }
+      },
+      { passive: true },
+    );
+  })();
+</script>

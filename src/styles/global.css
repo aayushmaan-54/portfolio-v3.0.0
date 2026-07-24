@@ -155,4 +155,13 @@
   .glitch-name::after {
     animation: none;
   }
+
+  .animate-blink,
+  .animate-ping {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }

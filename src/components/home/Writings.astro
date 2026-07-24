@@ -2,24 +2,27 @@
 import formatDate from "@/utils/formatDate";
 import getLatestPosts from "@/utils/getPosts";
 
+const BLOG_URL = import.meta.env.PUBLIC_BLOG_URL;
+
 const posts = await getLatestPosts();
 ---
 
 <div class="flex items-baseline justify-between gap-4 mt-16 sm:mt-20">
-  <h1 class="text-2xl font-semibold sm:text-3xl">
-    <span class="opacity-30 mr-2">#</span>writing
-  </h1>
+  <h2 class="text-2xl font-semibold sm:text-3xl">
+    <span class="opacity-30 mr-2" aria-hidden="true">#</span>writing
+  </h2>
   <a
-    href="https://blog.aayushmaansoni.com"
+    href={BLOG_URL}
     target="_blank"
-    rel="noopener
-  noreferrer"
-    class="group inline-flex items-center gap-1 text-sm
+    rel="noopener noreferrer"
+    data-haptic="nav"
+    class="group tap-target inline-flex items-center gap-1 text-sm
   text-foreground-muted hover:text-foreground-primary transition-colors"
   >
     view all
-    <span class="inline-block transition-transform group-hover:translate-x-1"
-      >→</span
+    <span
+      class="inline-block transition-transform group-hover:translate-x-1"
+      aria-hidden="true">→</span
     >
   </a>
 </div>
@@ -28,15 +31,16 @@ const posts = await getLatestPosts();
   {
     posts.map((post) => (
       <a
-        href={`https://blog.aayushmaansoni.com/${post.slug}`}
+        href={`${BLOG_URL}/${post.slug}`}
         target="_blank"
         rel="noopener noreferrer"
+        data-haptic="nav"
         class="group flex items-start justify-between gap-4 border-b border-border-primary last:border-b-0 px-0 py-4 hover:bg-background-hover hover:border-border-hover transition-colors sm:p-4"
       >
         <div class="min-w-0">
-          <h2 class="font-bold wrap-break-word group-hover:text-foreground-primary">
+          <h3 class="font-bold wrap-break-word group-hover:text-foreground-primary">
             {post.title}
-          </h2>
+          </h3>
           <time
             datetime={post.publishedAt}
             class="text-sm text-foreground-muted"

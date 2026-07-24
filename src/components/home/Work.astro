@@ -2,18 +2,18 @@
 import Works from "@/data/work";
 ---
 
-<h1 class="text-2xl font-semibold mt-16 sm:mt-20 sm:text-3xl">
-  <span class="opacity-30 mr-2 text-xl">#</span>work
-</h1>
+<h2 class="text-2xl font-semibold mt-16 sm:mt-20 sm:text-3xl">
+  <span class="opacity-30 mr-2 text-xl" aria-hidden="true">#</span>work
+</h2>
 
 <div class="space-y-0 mt-5">
   {
     Works.map((work) => (
       <div class="border-b border-border-primary px-0 py-4 hover:bg-background-hover hover:border-border-hover transition-colors cursor-default sm:p-4">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-          <h2 class="min-w-0 text-lg font-bold tracking-wide wrap-break-word">
+          <h3 class="min-w-0 text-lg font-bold tracking-wide wrap-break-word">
             {work.title}
-          </h2>
+          </h3>
 
           {work.inProgress ? (
             <span
@@ -29,7 +29,8 @@ import Works from "@/data/work";
                   href={work.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-foreground-muted hover:text-foreground-primary"
+                  data-haptic="nav"
+                  class="tap-target text-foreground-muted hover:text-foreground-primary"
                 >
                   github ↗
                 </a>
@@ -39,7 +40,8 @@ import Works from "@/data/work";
                   href={work.demo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-foreground-muted hover:text-foreground-primary"
+                  data-haptic="nav"
+                  class="tap-target text-foreground-muted hover:text-foreground-primary"
                 >
                   demo ↗
                 </a>
@@ -49,7 +51,8 @@ import Works from "@/data/work";
                   href={work.npm}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-foreground-muted hover:text-foreground-primary"
+                  data-haptic="nav"
+                  class="tap-target text-foreground-muted hover:text-foreground-primary"
                 >
                   npm ↗
                 </a>

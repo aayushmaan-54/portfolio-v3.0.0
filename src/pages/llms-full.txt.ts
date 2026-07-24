@@ -6,7 +6,7 @@ import experience from "@/data/experience";
 import education from "@/data/education";
 import credentials from "@/data/credentials";
 import techStack from "@/data/TechStack";
-import redirects from "@/data/redirects";
+import { destinations } from "@/data/redirects";
 
 const text = (body: string) =>
   new Response(`${body.trim()}\n`, {
@@ -26,35 +26,51 @@ const normalizeText = (value: string) =>
     .trim();
 
 const markdownList = (items: string[]) =>
-  items.filter(Boolean).map((item) => `- ${normalizeText(item)}`).join("\n");
+  items
+    .filter(Boolean)
+    .map((item) => `- ${normalizeText(item)}`)
+    .join("\n");
 
-const externalLinks = Object.entries(redirects)
-  .filter(([slug]) =>
-    ["github", "linkedin", "resume", "gmail"].includes(slug),
-  )
-  .map(([slug, href]) => `${slug}: ${href}`);
+const isUrl = (value: string) => /^(https?:\/\/|mailto:)/.test(value);
+
+const mdLink = (label: string, href: string, description?: string) =>
+  `[${normalizeText(label).replaceAll("[", "(").replaceAll("]", ")")}](${href})` +
+  (description ? ` - ${normalizeText(description)}` : "");
+
+const externalLinks = (
+  [
+    ["GitHub", destinations.github],
+    ["LinkedIn", destinations.linkedin],
+    ["Resume", destinations.resume],
+    ["Email", destinations.gmail],
+  ] as const
+)
+  .filter(([, href]) => isUrl(href))
+  .map(([label, href]) => mdLink(label, href));
 
 export const GET: APIRoute = () => {
   const origin = siteUrl();
+  const blog = import.meta.env.PUBLIC_BLOG_URL;
 
   return text(`
 # ${SITE.title}
 
+> ${normalizeText(profile.title)}. ${normalizeText(profile.description)}
+
 ## Overview
 ${profile.name} is a ${profile.title}.
 
-${profile.description}
-
-Site description: ${SITE.description}
+Site description: ${normalizeText(SITE.description)}
 Language: ${SITE.lang}
 Timezone: ${SITE.timezone}
-Canonical website: ${origin}/
+Canonical website: ${mdLink(`${SITE.domain}`, `${origin}/`)}
 
 ## Important URLs
 ${markdownList([
-  `Home: ${origin}/`,
-  `Concise LLM context: ${origin}/llms.txt`,
-  `Robots policy: ${origin}/robots.txt`,
+  mdLink("Home", `${origin}/`),
+  mdLink("Concise LLM context", `${origin}/llms.txt`),
+  mdLink("Robots policy", `${origin}/robots.txt`),
+  isUrl(blog) ? mdLink("Blog", blog) : "",
   ...externalLinks,
 ])}
 
@@ -66,9 +82,14 @@ ${work
       project.inProgress ? "Status: in progress" : "",
       project.description,
       `Stack: ${project.stack.join(", ")}`,
-      project.github ? `GitHub: ${project.github}` : "",
-      project.demo ? `Demo: ${project.demo}` : "",
-      "npm" in project && project.npm ? `NPM: ${project.npm}` : "",
+      (() => {
+        const links = [
+          project.github && mdLink("GitHub", project.github),
+          project.demo && mdLink("Demo", project.demo),
+          "npm" in project && project.npm && mdLink("npm", project.npm),
+        ].filter(Boolean);
+        return links.length ? `Links: ${links.join(", ")}` : "";
+      })(),
     ]
       .filter(Boolean)
       .map((line) => normalizeText(line))
@@ -113,7 +134,7 @@ ${credentials
     [
       `### ${item.title}`,
       `Issuer: ${item.issuer}`,
-      `Verification: ${item.verifyUrl}`,
+      `Verification: ${mdLink("Verify badge", item.verifyUrl)}`,
     ]
       .map((line) => normalizeText(line))
       .join("\n"),
@@ -122,7 +143,10 @@ ${credentials
 
 ## Technical Stack
 ${techStack
-  .map((group) => `### ${group.category}\n${markdownList(group.items.map((item) => item.name))}`)
+  .map(
+    (group) =>
+      `### ${group.category}\n${markdownList(group.items.map((item) => item.name))}`,
+  )
   .join("\n\n")}
   `);
 };

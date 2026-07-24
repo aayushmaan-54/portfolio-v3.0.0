@@ -21,15 +21,19 @@ const escapeXml = (value: string) =>
 
 export const GET: APIRoute = () => {
   const origin = siteUrl();
-  const urls = [`${origin}/`];
+  const lastmod = new Date().toISOString().split("T")[0];
+  const urls = [{ loc: `${origin}/`, priority: "1.0" }];
 
   return xml(`
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
   .map(
-    (url) => `  <url>
-    <loc>${escapeXml(url)}</loc>
+    ({ loc, priority }) => `  <url>
+    <loc>${escapeXml(loc)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>${priority}</priority>
   </url>`,
   )
   .join("\n")}
