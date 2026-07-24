@@ -10,8 +10,12 @@ export default [
     current: true,
     logo: hroneLogo,
     description: [
-      "Started as a frontend developer, building and maintaining web application features.",
-      "Moved into a cloud & infrastructure pod, working on an AWS-to-Azure migration.",
+      "Developed full-stack features for a no-code data management platform",
+      "Built authentication and account management features.",
+      "Developed advanced database properties such as Auto Increment, Unique, and Geolocation.",
+      "Implemented high-performance search, filters, and Kanban views using OpenSearch.",
+      "Built workflow automation nodes for task assignment and PDF generation.",
+      "Worked on event-driven backend systems using Kafka, CDC, and ClickHouse.",
     ],
   },
   {
@@ -22,9 +26,10 @@ export default [
     current: false,
     logo: automaticallyEnterpriseLogo,
     description: [
-      "Contributed to designing and enhancing multiple web applications, adding features like SSO, Blogs, and Contact Us pages.",
-      "Integrated AWS Cognito for secure user authentication.",
-      "Optimized MERN stack projects for improved performance and scalability.",
+      "Developed full-stack features using React, Node.js, and MongoDB.",
+      "Integrated AWS Cognito for user authentication and account management.",
+      "Implemented UI improvements and contributed to backend APIs.",
+      "Collaborated with the team through code reviews and sprint meetings.",
     ],
   },
 ];

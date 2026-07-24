@@ -2,7 +2,8 @@ export const destinations = {
   github: "https://github.com/aayushmaan-54",
   linkedin: "https://www.linkedin.com/in/aayushmaan54/",
   twitter: "https://x.com/aayushmaan5oni",
-  resume: "drive link here todo",
+  resume:
+    "https://drive.google.com/file/d/1F8O0d-i40No1dF-k7Q9tmkEQ3HycUn1v/view?usp=sharing",
   gmail: "mailto:aayushmaansoni.dev@gmail.com",
 } as const;
 
