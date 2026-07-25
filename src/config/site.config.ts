@@ -1,21 +1,11 @@
 const domain: string = import.meta.env.PUBLIC_DOMAIN;
 const protocol: string = import.meta.env.PUBLIC_PROTOCOL;
-
-if (/^[a-z]+:\/\//i.test(domain) || domain.includes("/")) {
-  throw new Error(
-    `PUBLIC_DOMAIN must be a bare host with no protocol or path (got "${domain}"). Example: aayushmaansoni.com`,
-  );
-}
-
-if (protocol !== "http" && protocol !== "https") {
-  throw new Error(
-    `PUBLIC_PROTOCOL must be "http" or "https" (got "${protocol}").`,
-  );
-}
+const blogUrl: string = import.meta.env.PUBLIC_BLOG_URL ?? "";
 
 export const SITE = {
   domain,
   protocol,
+  blogUrl,
   author: "aayushmaan soni",
   profile: "https://www.aayushmaansoni.com",
   title: "Aayushmaan Soni",

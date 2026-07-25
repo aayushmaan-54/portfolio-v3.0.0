@@ -1,10 +1,12 @@
+import { SITE } from "@/config/site.config";
+
 export type Post = {
   title: string;
   slug: string;
   publishedAt: string;
 };
 
-const POSTS_ENDPOINT = `${import.meta.env.PUBLIC_BLOG_URL}/api/posts.json`;
+const POSTS_ENDPOINT = `${SITE.blogUrl}/api/posts.json`;
 
 // Fetched at build time
 async function getLatestPosts(limit = 3): Promise<Post[]> {
@@ -19,7 +21,9 @@ async function getLatestPosts(limit = 3): Promise<Post[]> {
 
     return posts.slice(0, limit);
   } catch (error) {
-    console.warn(`[getPosts] failed to fetch ${POSTS_ENDPOINT}:`, error);
+    console.error(
+      `\n!! [getPosts] BUILD-TIME FETCH FAILED\n!! endpoint: ${POSTS_ENDPOINT}\n!! reason:   ${error instanceof Error ? error.message : error}\n!! The writing section will render empty.\n`,
+    );
 
     return [];
   }

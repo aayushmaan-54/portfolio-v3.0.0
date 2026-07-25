@@ -1,8 +1,9 @@
 ---
+import { SITE } from "@/config/site.config";
 import formatDate from "@/utils/formatDate";
 import getLatestPosts from "@/utils/getPosts";
 
-const BLOG_URL = import.meta.env.PUBLIC_BLOG_URL;
+const BLOG_URL = SITE.blogUrl;
 
 const posts = await getLatestPosts();
 ---
