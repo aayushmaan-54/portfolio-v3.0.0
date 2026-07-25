@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import experience from "@/data/experience";
 ---
 
@@ -20,12 +19,13 @@ import experience from "@/data/experience";
             class="flex flex-col gap-3 px-0 py-4 cursor-pointer list-none hover:bg-background-hover transition-colors sm:flex-row sm:items-center sm:justify-between sm:p-4"
           >
             <div class="flex min-w-0 items-start gap-3">
-              <Image
+              <img
                 src={job.logo}
                 alt={`${job.company} logo`}
-                width={24}
-                height={24}
-                densities={[1, 2]}
+                width="24"
+                height="24"
+                loading="lazy"
+                decoding="async"
                 class="w-6 shrink-0 rounded-sm"
               />
               <div class="min-w-0">

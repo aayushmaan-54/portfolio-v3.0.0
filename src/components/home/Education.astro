@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import education from "@/data/education";
 ---
 
@@ -14,12 +13,13 @@ import education from "@/data/education";
         <div class="border-b border-border-primary last:border-b-0 px-0 py-4 hover:bg-background-hover hover:border-border-hover transition-colors cursor-default sm:p-4">
           <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <h3 class="font-bold flex min-w-0 items-start gap-2 wrap-break-word">
-              <Image
+              <img
                 src={edu.logo}
                 alt={`${edu.institution} logo`}
-                width={20}
-                height={20}
-                densities={[1, 2]}
+                width="20"
+                height="20"
+                loading="lazy"
+                decoding="async"
                 class="w-5 shrink-0"
               />
               {edu.degree}

@@ -1,6 +1,3 @@
-import hroneLogo from "@/assets/logos/hrone.webp";
-import automaticallyEnterpriseLogo from "@/assets/logos/automatically-enterprise.webp";
-
 export default [
   {
     role: "Software Engineer",
@@ -8,7 +5,7 @@ export default [
     location: "Noida, Uttar Pradesh",
     duration: "1 Sept 2025 — Present",
     current: true,
-    logo: hroneLogo,
+    logo: "/images/hrone.webp",
     description: [
       "Developed full-stack features for a no-code data management platform",
       "Built authentication and account management features.",
@@ -24,7 +21,7 @@ export default [
     location: "Hybrid (Jaipur, Rajasthan)",
     duration: "July 2024 — Aug 2024",
     current: false,
-    logo: automaticallyEnterpriseLogo,
+    logo: "/images/automatically-enterprise.webp",
     description: [
       "Developed full-stack features using React, Node.js, and MongoDB.",
       "Integrated AWS Cognito for user authentication and account management.",

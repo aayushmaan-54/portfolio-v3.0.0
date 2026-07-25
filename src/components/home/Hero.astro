@@ -1,17 +1,15 @@
 ---
-import { Image } from "astro:assets";
-import profileImage from "@/assets/ditther-profile.webp";
 import Socials from "@/components/Socials.astro";
 import Profile from "@/data/profile";
 ---
 
-<Image
-  src={profileImage}
+<img
+  src="/images/profile.webp"
   alt={Profile.name}
-  width={140}
-  height={140}
-  densities={[1, 2]}
+  width="140"
+  height="140"
   loading="eager"
+  fetchpriority="high"
   class="rounded-full size-28 border-2 sm:size-35"
 />
 

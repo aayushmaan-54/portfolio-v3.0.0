@@ -1,6 +1,3 @@
-import skitLogo from "@/assets/logos/skit.webp";
-import vpsLogo from "@/assets/logos/vps.webp";
-
 export default [
   {
     degree: "Bachelor of Technology (B.Tech)",
@@ -11,7 +8,7 @@ export default [
     affiliation: "RTU Affiliated",
     field:
       "Computer Science Engineering with Specialization in Internet of Things (IoT)",
-    logo: skitLogo,
+    logo: "/images/skit.webp",
   },
   {
     degree: "Higher Secondary Education",
@@ -20,6 +17,6 @@ export default [
     duration: "2020 — 2022",
     affiliation: "CBSE Boards",
     field: "Class 10th - 12th",
-    logo: vpsLogo,
+    logo: "/images/vps.webp",
   },
 ];
