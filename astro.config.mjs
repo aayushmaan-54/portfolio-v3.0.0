@@ -3,18 +3,29 @@ import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
 import icon from "astro-icon";
 
-const { PUBLIC_PROTOCOL, PUBLIC_DOMAIN } = loadEnv(
-  process.env.NODE_ENV,
+const localEnv = loadEnv(
+  process.env.NODE_ENV || "development",
   process.cwd(),
   "",
 );
 
+const PUBLIC_PROTOCOL = process.env.PUBLIC_PROTOCOL || localEnv.PUBLIC_PROTOCOL;
+const PUBLIC_DOMAIN = process.env.PUBLIC_DOMAIN || localEnv.PUBLIC_DOMAIN;
+
 export default defineConfig({
   site: `${PUBLIC_PROTOCOL}://${PUBLIC_DOMAIN}`,
   output: "static",
+
   build: {
     inlineStylesheets: "always",
   },
+
+  image: {
+    service: {
+      entrypoint: "astro/assets/services/noop",
+    },
+  },
+
   devToolbar: {
     enabled: false,
   },
