@@ -20,12 +20,6 @@ export default defineConfig({
     inlineStylesheets: "always",
   },
 
-  image: {
-    service: {
-      entrypoint: "astro/assets/services/noop",
-    },
-  },
-
   devToolbar: {
     enabled: false,
   },
