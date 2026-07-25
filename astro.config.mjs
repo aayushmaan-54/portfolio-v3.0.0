@@ -3,6 +3,8 @@ import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
 import icon from "astro-icon";
 
+import cloudflare from "@astrojs/cloudflare";
+
 const localEnv = loadEnv(
   process.env.NODE_ENV || "development",
   process.cwd(),
@@ -69,4 +71,6 @@ export default defineConfig({
       }),
     },
   },
+
+  adapter: cloudflare(),
 });
