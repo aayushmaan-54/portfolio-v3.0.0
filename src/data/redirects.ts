@@ -4,7 +4,7 @@ export const destinations = {
   twitter: "https://x.com/aayushmaan5oni",
   resume:
     "https://drive.google.com/file/d/1F8O0d-i40No1dF-k7Q9tmkEQ3HycUn1v/view?usp=sharing",
-  gmail: "mailto:aayushmaansoni.dev@gmail.com",
+  gmail: "mailto:hello@aayushmaansoni.com",
 } as const;
 
 const aliases: Record<string, keyof typeof destinations> = {
