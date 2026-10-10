@@ -21,6 +21,10 @@ import Works from "@/data/work";
               style="font-variant-ligatures: none;"
             >
               working on it...
+              <span
+                class="ml-1 inline-block h-3.5 w-1.5 bg-foreground-muted align-middle animate-blink"
+                aria-hidden="true"
+              />
             </span>
           ) : (
             <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
@@ -30,7 +34,7 @@ import Works from "@/data/work";
                   target="_blank"
                   rel="noopener noreferrer"
                   data-haptic="nav"
-                  class="tap-target text-foreground-muted hover:text-foreground-primary"
+                  class="tap-target text-link hover:underline underline-offset-4"
                 >
                   github ↗
                 </a>
@@ -41,7 +45,7 @@ import Works from "@/data/work";
                   target="_blank"
                   rel="noopener noreferrer"
                   data-haptic="nav"
-                  class="tap-target text-foreground-muted hover:text-foreground-primary"
+                  class="tap-target text-link hover:underline underline-offset-4"
                 >
                   demo ↗
                 </a>
@@ -52,7 +56,7 @@ import Works from "@/data/work";
                   target="_blank"
                   rel="noopener noreferrer"
                   data-haptic="nav"
-                  class="tap-target text-foreground-muted hover:text-foreground-primary"
+                  class="tap-target text-link hover:underline underline-offset-4"
                 >
                   npm ↗
                 </a>

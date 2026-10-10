@@ -2,6 +2,18 @@ const domain: string = import.meta.env.PUBLIC_DOMAIN;
 const protocol: string = import.meta.env.PUBLIC_PROTOCOL;
 const blogUrl: string = import.meta.env.PUBLIC_BLOG_URL ?? "";
 
+if (protocol !== "http" && protocol !== "https") {
+  throw new Error(
+    `PUBLIC_PROTOCOL must be "http" or "https", got "${protocol}"`,
+  );
+}
+
+if (!/^[a-z0-9.-]+(:\d+)?$/i.test(domain)) {
+  throw new Error(
+    `PUBLIC_DOMAIN must be a bare host (no protocol, path or trailing slash), got "${domain}"`,
+  );
+}
+
 export const SITE = {
   domain,
   protocol,

@@ -4,6 +4,8 @@ export default [
     company: "HROne (Uneecops Pvt. Ltd.)",
     location: "Noida, Uttar Pradesh",
     duration: "1 Sept 2025 — Present",
+    startDate: "2025-09-01",
+    endDate: null,
     current: true,
     logo: "/images/hrone.webp",
     description: [
@@ -20,6 +22,8 @@ export default [
     company: "Automatically Enterprise",
     location: "Hybrid (Jaipur, Rajasthan)",
     duration: "July 2024 — Aug 2024",
+    startDate: "2024-07-01",
+    endDate: "2024-08-31",
     current: false,
     logo: "/images/automatically-enterprise.webp",
     description: [

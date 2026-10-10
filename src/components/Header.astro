@@ -17,10 +17,12 @@ const HeaderLink = [
 <header
   class="flex flex-col gap-4 text-base sm:flex-row sm:items-center sm:justify-between sm:text-lg"
 >
-  <p class="text-xl leading-tight whitespace-nowrap">{Profile.name}.</p>
+  <p data-scramble class="text-xl leading-tight whitespace-nowrap cursor-default">
+    {Profile.name}.
+  </p>
 
   <nav>
-    <ul class="flex flex-wrap gap-x-5 gap-y-2 sm:gap-x-7.5">
+    <ul class="flex flex-wrap gap-x-4 gap-y-2 max-[374px]:text-sm min-[375px]:gap-x-5 sm:gap-x-7.5">
       {
         HeaderLink.map((link) => {
           const isActive = pathname === link.href;

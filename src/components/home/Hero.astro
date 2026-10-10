@@ -20,11 +20,59 @@ import Profile from "@/data/profile";
   >
     {Profile.name}
   </h1>
-  <p class="text-lg text-foreground-muted font-medium sm:text-xl">
-    software engineer
+  <p
+    data-typewriter
+    class="text-lg text-foreground-muted font-medium sm:text-xl"
+  >
+    {Profile.title.toLowerCase()}
   </p>
+
+  {
+    Profile.currently && (
+      <p class="flex items-start gap-2 text-sm text-foreground-muted">
+        <span class="relative mt-1.5 flex h-2 w-2 shrink-0" aria-hidden="true">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-success" />
+        </span>
+        currently: {Profile.currently}
+      </p>
+    )
+  }
 
   <p class="text-base leading-relaxed sm:text-lg">{Profile.description}</p>
 
   <Socials />
 </div>
+
+<script is:inline>
+  (() => {
+    const el = document.querySelector("[data-typewriter]");
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const text = el.textContent.trim();
+    const typed = document.createElement("span");
+    const cursor = document.createElement("span");
+    cursor.className =
+      "ml-1 inline-block h-5 w-2 bg-foreground-muted align-middle animate-blink transition-opacity duration-500";
+    cursor.setAttribute("aria-hidden", "true");
+
+    el.setAttribute("aria-label", text);
+    el.textContent = "";
+    el.append(typed, cursor);
+
+    let i = 0;
+    const type = () => {
+      typed.textContent = text.slice(0, ++i);
+      if (i < text.length) {
+        setTimeout(type, 55 + Math.random() * 45);
+      } else {
+        setTimeout(() => {
+          cursor.classList.remove("animate-blink");
+          cursor.style.opacity = "0";
+        }, 1400);
+        setTimeout(() => cursor.remove(), 2000);
+      }
+    };
+    setTimeout(type, 300);
+  })();
+</script>

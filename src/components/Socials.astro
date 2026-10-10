@@ -9,9 +9,25 @@ import socialLinks from "@/data/socials";
         href={social.href}
         target="_blank"
         rel="noopener noreferrer"
-        title={`${social.label} (opens in a new tab)`}
+        title={
+          "copy" in social ? undefined : `${social.label} (opens in a new tab)`
+        }
+        aria-label={
+          "copy" in social
+            ? `${social.label}: click to copy email, double-click to open mail app`
+            : undefined
+        }
+        data-copy={"copy" in social ? social.copy : undefined}
+        data-tooltip={
+          "copy" in social
+            ? "click to copy · double-click to open mail"
+            : undefined
+        }
         data-haptic="nav"
-        class="tap-target text-foreground-muted hover:text-foreground-primary transition-colors hover:underline underline-offset-4 focus-visible:outline-none focus-visible:underline focus-visible:text-foreground-primary"
+        class:list={[
+          "tap-target text-link transition-colors hover:underline underline-offset-4 focus-visible:outline-none focus-visible:underline",
+          "copy" in social && "tooltip",
+        ]}
       >
         [{social.label} ↗]
       </a>

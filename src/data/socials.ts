@@ -1,3 +1,5 @@
+import { destinations } from "@/data/redirects";
+
 export default [
   {
     label: "github",
@@ -14,5 +16,6 @@ export default [
   {
     label: "gmail",
     href: "/gmail",
+    copy: destinations.gmail.replace(/^mailto:/, ""),
   },
 ];

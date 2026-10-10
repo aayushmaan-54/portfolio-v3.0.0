@@ -1,0 +1,177 @@
+---
+import { destinations } from "@/data/redirects";
+import shortcuts from "@/data/shortcuts";
+
+const github = destinations.github;
+const email = destinations.gmail.replace(/^mailto:/, "");
+---
+
+<dialog
+  data-shortcuts
+  aria-label="Keyboard shortcuts"
+  class="m-auto w-[min(22rem,calc(100%-2rem))] border border-border-hover bg-background-primary p-0 font-mono text-foreground-primary backdrop:bg-black/50"
+>
+  <div
+    class="flex items-center justify-between border-b border-border-primary px-4 py-3 text-sm"
+  >
+    <span class="text-foreground-muted">// keyboard shortcuts</span>
+    <button
+      type="button"
+      data-shortcuts-close
+      aria-label="Close"
+      class="text-foreground-muted hover:text-foreground-primary transition-colors focus:outline-none focus-visible:underline underline-offset-4"
+    >
+      [esc]
+    </button>
+  </div>
+  <ul class="space-y-2 px-4 py-3 text-sm">
+    {
+      shortcuts.map((shortcut) => (
+        <li class="flex items-center justify-between gap-4">
+          <span class="text-foreground-secondary">{shortcut.label}</span>
+          <kbd class="min-w-6 border border-border-primary px-1.5 text-center">
+            {shortcut.key}
+          </kbd>
+        </li>
+      ))
+    }
+  </ul>
+</dialog>
+
+<script is:inline define:vars={{ github, email, shortcuts }}>
+  (() => {
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Email links ([data-copy]): one click copies, double-click opens the mail app.
+    const flash = (link, text) => {
+      link.dataset.label ??= link.textContent;
+      link.textContent = text;
+      clearTimeout(link._flashTimer);
+      link._flashTimer = setTimeout(() => {
+        link.textContent = link.dataset.label;
+      }, 1500);
+    };
+
+    const openMail = () => {
+      window.location.href = `mailto:${email}`;
+    };
+
+    const copyEmail = async (links) => {
+      try {
+        await navigator.clipboard.writeText(email);
+        links.forEach((link) => flash(link, "[copied ✓]"));
+      } catch {
+        openMail();
+      }
+    };
+
+    document.addEventListener("click", (event) => {
+      const link = event.target?.closest?.("[data-copy]");
+      if (!link) return;
+
+      event.preventDefault();
+
+      if (event.detail >= 2) {
+        flash(link, "[opening mail…]");
+        openMail();
+      } else {
+        copyEmail([link]);
+      }
+    });
+
+    // Scramble: [data-scramble] text shuffles then resolves left to right on hover.
+    const scrambleEl = document.querySelector("[data-scramble]");
+    if (scrambleEl && !reducedMotion) {
+      const original = scrambleEl.textContent.trim();
+      const glyphs = "abcdefghijklmnopqrstuvwxyz<>/\\[]{}=+*#?!_";
+      let running = false;
+
+      scrambleEl.setAttribute("aria-label", original);
+      scrambleEl.addEventListener("mouseenter", () => {
+        if (running) return;
+        running = true;
+        let frame = 0;
+
+        const step = () => {
+          const revealed = Math.floor(frame / 1.5);
+          scrambleEl.textContent = [...original]
+            .map((char, i) =>
+              i < revealed || char === " " || char === "."
+                ? char
+                : glyphs[Math.floor(Math.random() * glyphs.length)],
+            )
+            .join("");
+          frame++;
+
+          if (revealed < original.length) {
+            setTimeout(step, 30);
+          } else {
+            scrambleEl.textContent = original;
+            running = false;
+          }
+        };
+
+        step();
+      });
+    }
+
+    // Keyboard shortcuts (list lives in src/data/shortcuts.ts).
+    const dialog = document.querySelector("[data-shortcuts]");
+    const toggleHelp = () => {
+      if (!dialog) return;
+      dialog.open ? dialog.close() : dialog.showModal();
+    };
+
+    document
+      .querySelectorAll("[data-shortcuts-open]")
+      .forEach((button) => button.addEventListener("click", toggleHelp));
+    dialog
+      ?.querySelector("[data-shortcuts-close]")
+      ?.addEventListener("click", () => dialog.close());
+    // Click on the backdrop closes it.
+    dialog?.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    const actions = {
+      theme: () => document.querySelector("[data-theme-toggle]")?.click(),
+      copy: () => copyEmail(document.querySelectorAll("[data-copy]")),
+      open: (shortcut) => window.open(shortcut.href, "_blank", "noopener"),
+      top: () => window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" }),
+      help: toggleHelp,
+    };
+
+    document.addEventListener("keydown", (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey || event.repeat) return;
+      if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+
+      const shortcut = shortcuts.find((s) => s.key === event.key.toLowerCase() || s.key === event.key);
+      if (!shortcut) return;
+
+      event.preventDefault();
+      if (shortcut.action !== "help" && dialog?.open) dialog.close();
+      actions[shortcut.action]?.(shortcut);
+    });
+
+    // Tab title nudge while the tab is in the background.
+    const title = document.title;
+    document.addEventListener("visibilitychange", () => {
+      document.title = document.hidden ? "come back :(" : title;
+    });
+
+    // Hello to anyone who opens devtools.
+    const art = [
+      "▄▀█ ▄▀█ █▄█ █░█ █▀ █░█ █▀▄▀█ ▄▀█ ▄▀█ █▄░█",
+      "█▀█ █▀█ ░█░ █▄█ ▄█ █▀█ █░▀░█ █▀█ █▀█ █░▀█",
+    ].join("\n");
+
+    console.log(
+      `%c${art}`,
+      "color:#0000ee;font-family:monospace;font-size:12px;line-height:1.2",
+    );
+    console.log(
+      `%c> looking under the hood? i like you.\n> source: ${github}\n> say hi: ${email}`,
+      "font-family:monospace;color:#888",
+    );
+  })();
+</script>
